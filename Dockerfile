@@ -3,6 +3,8 @@
 # =========================
 FROM python:3.14.3-slim AS builder
 
+ARG MODEL_NAME=Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice
+
 ENV MODEL_DIR=/models/qwen3-tts
 
 RUN apt-get update && apt-get install -y \
@@ -12,8 +14,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --no-cache-dir huggingface_hub
 
 RUN mkdir -p ${MODEL_DIR} && \
-    hf download \
-    Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice \
+    hf download ${MODEL_NAME} \
     --local-dir ${MODEL_DIR}
 
 # =========================

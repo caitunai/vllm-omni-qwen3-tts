@@ -17,6 +17,20 @@ jobs:
   build-and-push:
     # 指定运行此作业的操作系统
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        model:
+          - name: qwen3-tts-0.6b-custom
+            value: Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice
+          - name: qwen3-tts-1.7b-custom
+            value: Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice
+          - name: qwen3-tts-0.6b-base
+            value: Qwen/Qwen3-TTS-12Hz-0.6B-Base
+          - name: qwen3-tts-1.7b-design
+            value: Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign
+          - name: qwen3-tts-1.7b-base
+            value: Qwen/Qwen3-TTS-12Hz-1.7B-Base
     
     # 定义作业中的各个步骤
     steps:
@@ -54,33 +68,25 @@ jobs:
           # GH_TOKEN 是由 GitHub Actions 自动生成的、具有时效性的令牌
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Log in to suanli.cn Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: harbor1.suanleme.cn
-          # github.repository_owner 是仓库的所有者，作为 ghcr.io 的用户名
-          username: ${{ secrets.SUANLI_USERNAME }}
-          # GH_TOKEN 是由 GitHub Actions 自动生成的、具有时效性的令牌
-          password: ${{ secrets.SUANLI_TOKEN }}
-
       # 6. 提取元数据 (镜像标签和名称)
       # 这是一个非常强大的步骤，可以根据 Git 的事件自动生成合适的 Docker 标签
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
+          build-args: |
+            MODEL_NAME=${{ matrix.model.value }}
           # 格式为: '你的DockerHub用户名/你的仓库名'
           images: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
             ghcr.io/${{ github.repository }}
-            harbor1.suanleme.cn/${{ secrets.SUANLI_USERNAME }}/${{ github.event.repository.name }}
           tags: |
             # 当推送 'v1.2.3' 这样的 tag 时，会生成 '1.2.3' 标签
-            type=semver,pattern={{version}}
+            type=semver,pattern=${{ matrix.model.name }}-{{version}}
             # 当推送 'v1.2' 这样的 tag 时，会生成 '1.2' 标签
-            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern=${{ matrix.model.name }}-{{major}}.{{minor}}
             # 当推送到 main 分支时，会生成 'latest' 标签
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=${{ matrix.model.name }}-latest,enable={{is_default_branch}}
 
       # 7. 构建并推送 Docker 镜像
       # 使用 build-push-action 来执行构建和推送
@@ -99,5 +105,5 @@ jobs:
           # 使用上一步生成的标签作为镜像的 labels
           labels: ${{ steps.meta.outputs.labels }}
           # 启用构建缓存，以加快后续构建速度，暂时不启用，启用之后容易磁盘空间不足
-          # cache-from: type=gha
-          # cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:cache,mode=max
