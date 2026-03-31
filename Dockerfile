@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --no-cache-dir huggingface_hub
 
 RUN mkdir -p ${MODEL_DIR} && \
-    huggingface-cli download \
+    hf download \
     Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice \
     --local-dir ${MODEL_DIR} \
     --local-dir-use-symlinks False
