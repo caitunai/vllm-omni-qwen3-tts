@@ -14,8 +14,7 @@ RUN pip install --no-cache-dir huggingface_hub
 RUN mkdir -p ${MODEL_DIR} && \
     hf download \
     Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice \
-    --local-dir ${MODEL_DIR} \
-    --local-dir-use-symlinks False
+    --local-dir ${MODEL_DIR}
 
 # =========================
 # Stage 2: 运行环境

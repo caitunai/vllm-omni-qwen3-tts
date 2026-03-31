@@ -31,20 +31,6 @@ jobs:
       # 2. Checkout onnx files
       - name: Git LFS pull
         run: git lfs pull
-      - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@v1.3.1
-        with:
-          # this might remove tools that are actually needed,
-          # if set to "true" but frees about 6 GB
-          tool-cache: true
-          # all of these default to true, but feel free to set to
-          # "false" if necessary for your workflow
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: false
-          swap-storage: true
 
       # 3. 设置 Docker Buildx
       - name: Set up Docker Buildx
@@ -115,10 +101,3 @@ jobs:
           # 启用构建缓存，以加快后续构建速度，暂时不启用，启用之后容易磁盘空间不足
           # cache-from: type=gha
           # cache-to: type=gha,mode=max
-
-      # 8. 清理临时的配置文件
-      # 确保在作业结束后，从 runner 的文件系统中删除敏感文件
-      - name: Clean up config file
-        # 使用 if: always() 确保此步骤总是会执行，即使之前的步骤失败
-        if: always()
-        run: rm .app.toml.production
