@@ -21,15 +21,15 @@ jobs:
     strategy:
       matrix:
         model:
-          - name: qwen3-tts-0.6b-custom
+          - name: custom-0.6b
             value: Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice
-          - name: qwen3-tts-1.7b-custom
+          - name: custom-1.7b
             value: Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice
-          - name: qwen3-tts-0.6b-base
+          - name: base-0.6b
             value: Qwen/Qwen3-TTS-12Hz-0.6B-Base
-          - name: qwen3-tts-1.7b-design
+          - name: design-1.7b
             value: Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign
-          - name: qwen3-tts-1.7b-base
+          - name: base-1.7b
             value: Qwen/Qwen3-TTS-12Hz-1.7B-Base
     
     # 定义作业中的各个步骤
@@ -74,8 +74,6 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          build-args: |
-            MODEL_NAME=${{ matrix.model.value }}
           # 格式为: '你的DockerHub用户名/你的仓库名'
           images: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
@@ -100,6 +98,8 @@ jobs:
           platforms: linux/amd64
           # 设置为 true 以推送镜像
           push: true
+          build-args: |
+            MODEL_NAME=${{ matrix.model.value }}
           # 使用上一步生成的标签
           tags: ${{ steps.meta.outputs.tags }}
           # 使用上一步生成的标签作为镜像的 labels
