@@ -15,7 +15,8 @@ RUN pip install --no-cache-dir huggingface_hub
 
 RUN mkdir -p ${MODEL_DIR} && \
     hf download ${MODEL_NAME} \
-    --local-dir ${MODEL_DIR}
+    --local-dir ${MODEL_DIR} \
+    && git clone https://github.com/vllm-project/vllm-omni.git /vllm-omni
 
 # =========================
 # Stage 2: 运行环境
@@ -32,6 +33,7 @@ RUN apt-get update && apt-get install -y \
 
 # 从 builder 拷贝模型
 COPY --from=builder /models /models
+COPY --from=builder /vllm-omni /app/vllm-omni
 
 # 暴露端口
 EXPOSE 8091

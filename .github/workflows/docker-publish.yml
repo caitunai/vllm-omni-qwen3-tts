@@ -23,14 +23,14 @@ jobs:
         model:
           - name: custom-0.6b
             value: Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice
-          - name: custom-1.7b
-            value: Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice
-          - name: base-0.6b
-            value: Qwen/Qwen3-TTS-12Hz-0.6B-Base
-          - name: design-1.7b
-            value: Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign
-          - name: base-1.7b
-            value: Qwen/Qwen3-TTS-12Hz-1.7B-Base
+          # - name: custom-1.7b
+          #   value: Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice
+          # - name: base-0.6b
+          #   value: Qwen/Qwen3-TTS-12Hz-0.6B-Base
+          # - name: design-1.7b
+          #   value: Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign
+          # - name: base-1.7b
+          #   value: Qwen/Qwen3-TTS-12Hz-1.7B-Base
     
     # 定义作业中的各个步骤
     steps:
